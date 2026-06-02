@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ "Register" if mode == "register" else "Login" }} — SecureVault{% endblock %}
+
+{% block head %}
+<style>
+  .auth-wrap {
+    min-height: calc(100vh - 60px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  .auth-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2.5rem 2rem;
+    width: 100%; max-width: 420px;
+  }
+  .auth-icon { font-size: 2.8rem; text-align: center; margin-bottom: .5rem; }
+  .auth-title {
+    text-align: center; font-size: 1.5rem; font-weight: 700;
+    margin-bottom: .25rem;
+  }
+  .auth-sub { text-align: center; color: var(--muted); font-size: .88rem; margin-bottom: 2rem; }
+  .auth-switch { text-align: center; margin-top: 1.5rem; font-size: .88rem; color: var(--muted); }
+  .auth-switch a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .auth-switch a:hover { text-decoration: underline; }
+  .btn-full { width: 100%; justify-content: center; padding: .75rem; font-size: 1rem; }
+  .crypto-tags {
+    display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center;
+    margin-top: 1.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrap" style="margin-top:-2rem">
+  <div class="auth-card">
+    <div class="auth-icon">🔐</div>
+    <div class="auth-title">{% if mode == "register" %}Create Account{% else %}Welcome Back{% endif %}</div>
+    <div class="auth-sub">{% if mode == "register" %}Set up your secure vault{% else %}Unlock your vault{% endif %}</div>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Enter username" required autofocus/>
+      </div>
+      <div class="form-group">
+        <label>Master Password</label>
+        <input type="password" name="password" placeholder="At least 8 characters" required/>
+      </div>
+      {% if mode == "register" %}
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm" placeholder="Repeat password" required/>
+      </div>
+      {% endif %}
+      <button class="btn btn-primary btn-full" type="submit">
+        {% if mode == "register" %}🚀 Create Vault{% else %}🔓 Unlock Vault{% endif %}
+      </button>
+    </form>
+
+    <div class="auth-switch">
+      {% if mode == "register" %}
+        Already have an account? <a href="/login">Login here</a>
+      {% else %}
+        New to SecureVault? <a href="/register">Create account</a>
+      {% endif %}
+    </div>
+
+    <div class="crypto-tags">
+      <span class="badge badge-blue">AES-256-GCM</span>
+      <span class="badge badge-purple">RSA-2048</span>
+      <span class="badge badge-green">PBKDF2-SHA256</span>
+    </div>
+  </div>
+</div>
+{% endblock %}

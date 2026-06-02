@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SecureVault{% endblock %}
+
+{% block head %}
+<style>
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+  }
+  .page-title { font-size: 1.4rem; font-weight: 700; }
+  .page-sub   { color: var(--muted); font-size: .88rem; margin-top: .2rem; }
+
+  /* Upload zone */
+  .upload-card {
+    background: var(--card); border: 2px dashed var(--border);
+    border-radius: var(--radius); padding: 2rem;
+    text-align: center; margin-bottom: 2rem;
+    transition: border-color .2s;
+  }
+  .upload-card:hover { border-color: var(--accent); }
+  .upload-card input[type=file] { display: none; }
+  .upload-label {
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; gap: .75rem;
+  }
+  .upload-icon { font-size: 2.5rem; }
+  .upload-text { color: var(--muted); font-size: .9rem; }
+  .upload-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap; }
+  #file-name { color: var(--accent); font-size: .9rem; min-height: 1.2rem; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem; margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.1rem 1.2rem;
+    text-align: center;
+  }
+  .stat-val { font-size: 1.6rem; font-weight: 700; }
+  .stat-lbl { font-size: .78rem; color: var(--muted); margin-top: .2rem; }
+
+  /* File table */
+  .files-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .files-title { font-size: 1.05rem; font-weight: 600; }
+  .search-input {
+    padding: .45rem .9rem; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-size: .88rem; outline: none; width: 220px;
+  }
+  .search-input:focus { border-color: var(--accent); }
+
+  .file-row {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1rem 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: .6rem; flex-wrap: wrap;
+    transition: border-color .2s;
+  }
+  .file-row:hover { border-color: var(--accent); }
+  .file-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name {
+    font-weight: 600; font-size: .95rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .file-meta { font-size: .78rem; color: var(--muted); margin-top: .2rem; }
+  .file-actions { display: flex; gap: .5rem; flex-wrap: wrap; flex-shrink: 0; }
+
+  /* Share modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: #00000088; z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem; width: 360px; max-width: 90vw;
+  }
+  .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+  .modal-actions { display: flex; gap: .75rem; margin-top: 1rem; justify-content: flex-end; }
+
+  .empty-state {
+    text-align: center; padding: 4rem 2rem; color: var(--muted);
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-title">🗄️ My Vault</div>
+    <div class="page-sub">All files are AES-256-GCM encrypted · RSA-2048 signed</div>
+  </div>
+</div>
+
+<!-- Upload -->
+<div class="upload-card" id="drop-zone">
+  <form method="POST" action="/upload" enctype="multipart/form-data" id="upload-form">
+    <label class="upload-label" for="file-input">
+      <div class="upload-icon">📁</div>
+      <div style="font-weight:600">Drop a file or click to browse</div>
+      <div class="upload-text">Max 16 MB · File will be AES-256-GCM encrypted before upload</div>
+      <div id="file-name"></div>
+    </label>
+    <input type="file" id="file-input" name="file" onchange="showFileName(this)"/>
+    <div class="upload-actions">
+      <label for="file-input" class="btn btn-outline" style="cursor:pointer">📂 Browse</label>
+      <button class="btn btn-primary" type="submit">🔒 Encrypt &amp; Upload</button>
+    </div>
+  </form>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-val">{{ files|length }}</div>
+    <div class="stat-lbl">Files in Vault</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" style="color:var(--accent)">AES-256</div>
+    <div class="stat-lbl">Encryption</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" style="color:var(--accent2)">RSA-2048</div>
+    <div class="stat-lbl">Signatures</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" style="color:var(--success)">SHA-256</div>
+    <div class="stat-lbl">Integrity Hash</div>
+  </div>
+</div>
+
+<!-- File list -->
+<div class="files-header">
+  <div class="files-title">Encrypted Files</div>
+  <input class="search-input" placeholder="🔍 Search files…" oninput="filterFiles(this.value)"/>
+</div>
+
+{% if files %}
+  <div id="file-list">
+  {% for f in files %}
+    <div class="file-row" data-name="{{ f.filename|lower }}">
+      <div class="file-icon">
+        {% if f.filename.endswith(('.png','.jpg','.jpeg','.gif','.webp')) %}🖼️
+        {% elif f.filename.endswith('.pdf') %}📄
+        {% elif f.filename.endswith(('.zip','.rar','.7z')) %}🗜️
+        {% elif f.filename.endswith(('.py','.js','.html','.css')) %}💻
+        {% elif f.filename.endswith(('.doc','.docx','.txt')) %}📝
+        {% else %}📦{% endif %}
+      </div>
+      <div class="file-info">
+        <div class="file-name">{{ f.filename }}</div>
+        <div class="file-meta">
+          {% if f.owner == username %}
+            <span class="badge badge-blue">Owner</span>
+          {% else %}
+            <span class="badge badge-purple">Shared by {{ f.owner }}</span>
+          {% endif %}
+          &nbsp;{{ f.size_fmt }} &nbsp;·&nbsp; {{ f.uploaded_at }}
+          {% if f.shared_with %}
+            &nbsp;·&nbsp; Shared with: {{ f.shared_with|join(', ') }}
+          {% endif %}
+        </div>
+      </div>
+      <div class="file-actions">
+        <a class="btn btn-success btn-sm" href="/download/{{ f.id }}">⬇ Download</a>
+        <a class="btn btn-outline btn-sm" href="/verify/{{ f.id }}">🔍 Verify</a>
+        {% if f.owner == username %}
+        <button class="btn btn-outline btn-sm"
+                onclick="openShare('{{ f.id }}','{{ f.filename }}')">🔗 Share</button>
+        <form method="POST" action="/delete/{{ f.id }}" style="display:inline"
+              onsubmit="return confirm('Delete \'{{ f.filename }}\'? This cannot be undone.')">
+          <button class="btn btn-red btn-sm" type="submit">🗑 Delete</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🔒</div>
+    <div style="font-weight:600;margin-bottom:.5rem">No files yet</div>
+    <div>Upload your first file above to get started.</div>
+  </div>
+{% endif %}
+
+<!-- Share Modal -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal">
+    <div class="modal-title">🔗 Share File</div>
+    <div id="share-filename" style="color:var(--muted);font-size:.88rem;margin-bottom:1rem"></div>
+    <form method="POST" id="share-form">
+      <div class="form-group">
+        <label>Share with (username)</label>
+        <input type="text" name="target_user" placeholder="Enter username" required autofocus/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeShare()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Share</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showFileName(input) {
+    document.getElementById('file-name').textContent =
+      input.files[0] ? '📎 ' + input.files[0].name : '';
+  }
+  function filterFiles(q) {
+    document.querySelectorAll('.file-row').forEach(row => {
+      row.style.display = row.dataset.name.includes(q.toLowerCase()) ? '' : 'none';
+    });
+  }
+  function openShare(fid, name) {
+    document.getElementById('share-form').action = '/share/' + fid;
+    document.getElementById('share-filename').textContent = '📁 ' + name;
+    document.getElementById('share-modal').classList.add('active');
+  }
+  function closeShare() {
+    document.getElementById('share-modal').classList.remove('active');
+  }
+  // Close modal on backdrop click
+  document.getElementById('share-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeShare();
+  });
+</script>
+{% endblock %}

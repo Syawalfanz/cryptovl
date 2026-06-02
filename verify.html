@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Verify — {{ record.filename }}{% endblock %}
+
+{% block head %}
+<style>
+  .verify-header { margin-bottom: 2rem; }
+  .verify-title { font-size: 1.4rem; font-weight: 700; margin-bottom: .25rem; }
+  .verify-sub   { color: var(--muted); font-size: .9rem; }
+
+  .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  @media(max-width:600px) { .result-grid { grid-template-columns: 1fr; } }
+
+  .result-card {
+    border-radius: var(--radius); padding: 1.5rem;
+    border: 2px solid;
+  }
+  .result-card.pass {
+    background: #14532d22; border-color: var(--success);
+  }
+  .result-card.fail {
+    background: #7f1d1d22; border-color: var(--danger);
+  }
+  .result-icon  { font-size: 2.2rem; margin-bottom: .5rem; }
+  .result-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .result-value { font-size: 1.15rem; font-weight: 700; margin-top: .2rem; }
+  .result-desc  { font-size: .82rem; color: var(--muted); margin-top: .5rem; line-height: 1.5; }
+
+  .info-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  .info-table tr { border-bottom: 1px solid var(--border); }
+  .info-table tr:last-child { border-bottom: none; }
+  .info-table td { padding: .75rem .5rem; }
+  .info-table td:first-child { color: var(--muted); width: 160px; }
+  .hash-val {
+    font-family: 'Courier New', monospace; font-size: .78rem;
+    color: var(--accent); word-break: break-all;
+    background: var(--surface); padding: .75rem 1rem;
+    border-radius: 8px; border: 1px solid var(--border);
+    margin-top: .4rem; cursor: pointer;
+  }
+  .hash-label { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .hash-match {
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .3rem .8rem; border-radius: 6px; font-size: .82rem;
+    font-weight: 600; margin-top: .5rem;
+  }
+  .hash-match.ok  { background: #14532d44; color: #86efac; }
+  .hash-match.bad { background: #7f1d1d44; color: #fca5a5; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: .4rem;
+    color: var(--muted); text-decoration: none; font-size: .9rem;
+    margin-bottom: 1.5rem;
+  }
+  .back-link:hover { color: var(--text); }
+</style>
+{% endblock %}
+
+{% block content %}
+<a class="back-link" href="/">← Back to Dashboard</a>
+
+<div class="verify-header">
+  <div class="verify-title">🔍 Security Verification</div>
+  <div class="verify-sub">{{ record.filename }} · {{ size_fmt }} · Uploaded {{ record.uploaded_at }}</div>
+</div>
+
+<!-- Result Cards -->
+<div class="result-grid">
+  <!-- Integrity -->
+  <div class="result-card {{ 'pass' if integrity_ok else 'fail' }}">
+    <div class="result-icon">{{ '✅' if integrity_ok else '❌' }}</div>
+    <div class="result-label">Integrity Check</div>
+    <div class="result-value" style="color:{{ 'var(--success)' if integrity_ok else 'var(--danger)' }}">
+      {{ 'PASSED' if integrity_ok else 'FAILED' }}
+    </div>
+    <div class="result-desc">
+      SHA-256 hash of decrypted file {{ 'matches' if integrity_ok else 'does NOT match' }}
+      the stored hash. The file {{ 'has not been' if integrity_ok else 'may have been' }} tampered with.
+    </div>
+  </div>
+
+  <!-- Authenticity -->
+  <div class="result-card {{ 'pass' if authentic_ok else 'fail' }}">
+    <div class="result-icon">{{ '✅' if authentic_ok else '❌' }}</div>
+    <div class="result-label">Authenticity Check</div>
+    <div class="result-value" style="color:{{ 'var(--success)' if authentic_ok else 'var(--danger)' }}">
+      {{ 'PASSED' if authentic_ok else 'FAILED' }}
+    </div>
+    <div class="result-desc">
+      RSA-2048 PSS signature {{ 'verified' if authentic_ok else 'INVALID' }}.
+      File was {{ 'confirmed' if authentic_ok else 'NOT confirmed' }} as uploaded by
+      <strong>{{ record.owner }}</strong>.
+    </div>
+  </div>
+</div>
+
+<!-- File Info -->
+<div class="card" style="margin-bottom:1.5rem">
+  <div style="font-weight:600;margin-bottom:1rem">📋 File Information</div>
+  <table class="info-table">
+    <tr><td>Filename</td><td>{{ record.filename }}</td></tr>
+    <tr><td>Owner</td><td>{{ record.owner }}</td></tr>
+    <tr><td>File Size</td><td>{{ size_fmt }}</td></tr>
+    <tr><td>Uploaded</td><td>{{ record.uploaded_at }}</td></tr>
+    <tr><td>Encryption</td><td><span class="badge badge-blue">AES-256-GCM</span></td></tr>
+    <tr><td>Signature</td><td><span class="badge badge-purple">RSA-2048 PSS + SHA-256</span></td></tr>
+    <tr><td>Hash Algorithm</td><td><span class="badge badge-green">SHA-256</span></td></tr>
+    {% if record.shared_with %}
+    <tr><td>Shared With</td><td>{{ record.shared_with|join(', ') }}</td></tr>
+    {% endif %}
+  </table>
+</div>
+
+<!-- Hash Comparison -->
+<div class="card" style="margin-bottom:1.5rem">
+  <div style="font-weight:600;margin-bottom:1rem">🔑 SHA-256 Hash Comparison</div>
+
+  <div class="hash-label">Stored Hash (at upload time)</div>
+  <div class="hash-val" title="Click to copy" onclick="copyHash(this, '{{ stored_hash }}')">
+    {{ stored_hash }}
+  </div>
+
+  <div class="hash-label" style="margin-top:1rem">Live Hash (re-computed now)</div>
+  <div class="hash-val" title="Click to copy" onclick="copyHash(this, '{{ live_hash }}')">
+    {{ live_hash }}
+  </div>
+
+  <div class="hash-match {{ 'ok' if integrity_ok else 'bad' }}">
+    {{ '✅ Hashes match — file integrity confirmed' if integrity_ok else '❌ Hashes differ — file may be corrupted or tampered' }}
+  </div>
+</div>
+
+<!-- Actions -->
+<div style="display:flex;gap:1rem;flex-wrap:wrap">
+  <a class="btn btn-success" href="/download/{{ record.id }}">⬇ Download File</a>
+  <a class="btn btn-outline" href="/">← Back to Dashboard</a>
+</div>
+
+<script>
+  function copyHash(el, hash) {
+    navigator.clipboard.writeText(hash);
+    const orig = el.textContent;
+    el.textContent = '✓ Copied!';
+    setTimeout(() => el.textContent = orig, 1500);
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "710dd2d9-182e-46ad-b0aa-5267c1191433",
+    "filename": "bis20403_project_instruction_latest.docx",
+    "owner": "CI250113",
+    "shared_with": [],
+    "file_hash": "f83d4a4bf0106613ce2983ce228260798e07aa0737fcdcea13db9dce5da792fb",
+    "signature": "gjxjOedmqR2LVWcHvBZkNc52gplVK+WhO/7Po0qRcWu+RGRSdl6h69n/Ubh0lierBgSSkxxux4Ov2PoqGu7FxjxPJztk6qGix5P2+cCNhb0L+FYZuP6bHQsxhw7Gy+Y4HAY68U++sOS9+31dos0EY84WVg9z0E+rjp1BpBNhbd0HUSIZMLxDJIYrAplqLGlMqJTIezWZfi0/5WusFm82qxM0HwqtrPtwa0cfbaX/H9KxcdN77Mbj/jDNNETLepUS8eWXnOIFOpJAG85OOkGA6B1l6yrssUQeIYxIqZUv6Cb5l2z9ViuZtKm2NPW3WMQZ59FfrVAh+K8pKCIF4qOrjA==",
+    "enc_keys": {
+      "CI250113": "3rKyTWGLxKq/+RbdBP3lxabKA7iQcfDGmiEJailBaMh96amuYq0RW/gC7wEtUU21hmP4MR9r7jgarczZ"
+    },
+    "uploaded_at": "2026-05-17T08:32:35",
+    "size": 32961
+  },
+  {
+    "id": "e0d01d61-19b7-4f97-986c-6e836b90e24d",
+    "filename": "ieee-template-a4_latest.doc",
+    "owner": "CI250115",
+    "shared_with": [
+      "CI250113"
+    ],
+    "file_hash": "5347753e67f412a02ae78763b0e6bab3ad5a08e0556eb3c302472ba7ebd0eb07",
+    "signature": "e6g8IBnP5oG2Ezl+TDNWvfOu7LJFYFNQZhhSsWuEwqg/ZKLHvnkFZ37GFa6acuI5DXV5zXuq5AYmJsDj1CaPKL7vmgP+zMRcmxpXs1JGhD9qZ/sjnTySSirvIEk12cDSD7XMrbkGt7TwWdthUU0JQjA+iNcariAXNLbYa4Ud5LIvwW5JZ25z7bma/1G0ul8tdtRHjqK28T0jfG1jO1L2qyvggo+4SxdkEQ2GMqWna0zJ/tdTEK9T51ZNLF7O81EdygvhnT5qWJPdFuO91L4YG4Lg7EnjSPfpR0KTHoE9HtcWvvpEXDHld6HCyHl03yy5eakbvuq6Y9eTV96YkEURNA==",
+    "enc_keys": {
+      "CI250115": "Zrq8YKFATHy4I7slQKDGSmhPU78e3t1rpSdwxDTM9ItJGkTINKbjg3AUNHrQ1Vu1MyrFfQr7zq7HxAfU",
+      "CI250113": "aBcudO0xyyr7NLWDHiTVPHq0WFudV32HC1JEP7hyRtXdXnig8y8dyrIn1ciijN8TtMepyMHdSkW6IgzV4uBgrmqnKAsoWtHR4IvJgmcd/ImW1lf/HUZG4njdRLSzxzdbmSrI+zGh2BT4K6lbuHJJz4Bfp1Hf27UGaUIJN4dZ+zjWEb/QyKxp7L5R62dXO5U85b6AX8JqGRAbQAIH5P988tz2a+v3PoBdEh9lD+jTJat4aJAuG8XWqtga7/6aHhuvdLc9nDiiw71RxNYLKU61raO6eonn7/ynPdsbCH1ADfZD4A7aw6ZumffcO2R6Lx9M4w0Pi87ydHQ16EEhiC2GGQ=="
+    },
+    "uploaded_at": "2026-05-17T08:33:34",
+    "size": 64000
+  },
+  {
+    "id": "51976aa0-d7de-4db6-b731-b74bda01de30",
+    "filename": "Arabic Mix & Match Game 2P.html",
+    "owner": "CI250113",
+    "shared_with": [
+      "CI250115"
+    ],
+    "file_hash": "3fad484025069ce1aa1abf723a199ad2f6d62bed7eca8134f18ba3b5c890fc34",
+    "signature": "WI1mWQg4uOgXPe9ZJufNjAdjQo7pKHVaeqKcBtbmkEjVlfOiP68vEb8/41a/U/K7MbALet5K8TnNHXNucCh31+qMrCGMseeJaqnFIHeRs3yONFb2kw9DPFmnm/jKf7pVSRm21fzKt6vSw39ZEH11ALak5MfI/kCihN9g/x4U/ZLN9J/dmcepJ4TCrQuHCuyuGuHBy/fR1g/eowj0SqZkXILFOsN5++ryajMMNm83c4ztDe2xvYF1UOGs/TRIgCqNuyy4zAHl9zQO2qpjY7pE7hwROd0lIT1McNxerhIkIe7gy9/YAfevnTJsf2k9a1m5lE41+bh4bAz86v6m8ZPUEQ==",
+    "enc_keys": {
+      "CI250113": "VYm7Ozrj6Ox+DyHmhurmUHVdaQzuV/SEcrfjVDx6W/oPutroONQRSk6yiZxetuAkFEtU+giyHwUKZaAA",
+      "CI250115": "sGvGJ6MuFsrdzwf0/fqSup9zgNFYeFlJ1Cnwzm6gyIN3MyT5YXuoX1NMG4lxkIWYYL156x8KX5jUaT+/9PotM3mJgXKxGNLJyJxwoFZ5BqyEyupE60Gwwueqlim0LAgMq/I5hVjtZABo6AbCpZdpuw4M15Sd9MhcNA1sl2zzBTtdJC09a0LcOXsTVQ6Pl+fIY7TZjqBJIixO1SabrFbNC6XgLcfiNRYnNE9hjv846LwzR4JFXqEgCnTA9AMVWt3YqqGZplV6gEPtSNcuwc4cyAy/QMjphNhJMioTtqLBEyOK1a+znV+vtn6S1WIjeXMSk7DQ+9eMQnH6meCkOFmcwA=="
+    },
+    "uploaded_at": "2026-05-25T18:35:40",
+    "size": 27698
+  }
+]

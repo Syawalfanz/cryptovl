@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}SecureVault{% endblock %}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f0f17;
+      --surface:  #1a1a2e;
+      --card:     #16213e;
+      --border:   #2a2a4a;
+      --accent:   #4f8ef7;
+      --accent2:  #7c3aed;
+      --success:  #22c55e;
+      --danger:   #ef4444;
+      --warn:     #f59e0b;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --radius:   12px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-brand {
+      font-size: 1.25rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .nav-user { display: flex; align-items: center; gap: 1rem; }
+    .nav-user span { color: var(--muted); font-size: .9rem; }
+    .btn-sm {
+      padding: .35rem .9rem; border-radius: 8px; font-size: .85rem;
+      border: none; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .4rem;
+      transition: opacity .15s;
+    }
+    .btn-sm:hover { opacity: .85; }
+    .btn-ghost { background: var(--border); color: var(--text); }
+    .btn-danger { background: var(--danger); color: #fff; }
+
+    /* ── Layout ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── Flash messages ── */
+    .flashes { list-style: none; margin-bottom: 1.5rem; }
+    .flash {
+      padding: .75rem 1.2rem; border-radius: var(--radius);
+      margin-bottom: .5rem; font-size: .92rem;
+    }
+    .flash.success { background: #14532d44; border: 1px solid var(--success); color: #86efac; }
+    .flash.error   { background: #7f1d1d44; border: 1px solid var(--danger);  color: #fca5a5; }
+    .flash.info    { background: #1e3a5f44; border: 1px solid var(--accent);  color: #93c5fd; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      padding: .6rem 1.4rem; border-radius: 8px; font-size: .95rem;
+      border: none; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-weight: 600; transition: opacity .15s, transform .1s;
+    }
+    .btn:hover { opacity: .9; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-red     { background: var(--danger);  color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+    /* ── Forms ── */
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: .4rem; }
+    .form-group input, .form-group select {
+      width: 100%; padding: .65rem 1rem; border-radius: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); font-size: .95rem; outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-block; padding: .2rem .6rem; border-radius: 6px;
+      font-size: .75rem; font-weight: 600;
+    }
+    .badge-blue   { background: #1e3a8a55; color: #93c5fd; border: 1px solid #3b82f655; }
+    .badge-purple { background: #4c1d9555; color: #c4b5fd; border: 1px solid #7c3aed55; }
+    .badge-green  { background: #14532d55; color: #86efac; border: 1px solid #22c55e55; }
+    .badge-red    { background: #7f1d1d55; color: #fca5a5; border: 1px solid #ef444455; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="/">🔐 SecureVault</a>
+  {% if session.username %}
+  <div class="nav-user">
+    <span>👤 {{ session.username }}</span>
+    <a class="btn-sm btn-ghost" href="/logout">Lock &amp; Exit</a>
+  </div>
+  {% endif %}
+</nav>
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for cat, msg in messages %}
+          <li class="flash {{ cat }}">{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
